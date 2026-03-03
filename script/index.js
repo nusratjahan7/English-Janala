@@ -1,3 +1,19 @@
+const createElements = (arr) => {
+    console.log(arr);
+    const htmlElements = arr.map(el => `<span class="btn">${el}</span>`);
+    return(htmlElements.join(" "));
+};
+
+const manageSpinner = (status) => {
+    if(status == true){
+        document.getElementById("spinner").classList.remove("hidden");
+        document.getElementById("word-container").classList.add("hidden");
+    } else {
+        document.getElementById("word-container").classList.remove("hidden");
+        document.getElementById("spinner").classList.add("hidden");
+    }
+};
+
 const loadLessons = () => {
     fetch("https://openapi.programming-hero.com/api/levels/all") // promise of response
     .then ((res) => res.json()) // promise of json data
@@ -7,9 +23,10 @@ const loadLessons = () => {
 const removeActive = () => {
     const lessonBtns = document.querySelectorAll(".lesson-btn");
     lessonBtns.forEach(btn => btn.classList.remove("active"));
-}
+};
 
 const loadLevelWord = (id) => {
+    manageSpinner(true);
     const url = `https://openapi.programming-hero.com/api/level/${id}`;
     fetch(url)
     .then ((res) => res.json())
@@ -19,6 +36,52 @@ const loadLevelWord = (id) => {
         clickBtn.classList.add("active");
         displayLevelWord(data.data);
     })
+};
+
+// {
+//     "word": "Eager",
+//     "meaning": "আগ্রহী",
+//     "pronunciation": "ইগার",
+//     "level": 1,
+//     "sentence": "The kids were eager to open their gifts.",
+//     "points": 1,
+//     "partsOfSpeech": "adjective",
+//     "synonyms": [
+//         "enthusiastic",
+//         "excited",
+//         "keen"
+//     ],
+//     "id": 5
+// }
+
+const loadWordDetail = async (id) => {
+    const url = `https://openapi.programming-hero.com/api/word/${id}`;
+    const res = await fetch(url);
+    const details = await res.json();
+    displayWordDetails(details.data);
+}
+
+const displayWordDetails = (word) => {
+    console.log(word);
+    const detailsBox = document.getElementById("details-container");
+    detailsBox.innerHTML = `<div>
+            <h2 class="text-xl font-semibold">${word.word} (<i class="fa-solid fa-microphone-lines"></i> : ${word.pronunciation})</h2>
+        </div>
+        <div>
+            <h2 class="font-semibold">Meaning</h2>
+            <p class="font-bangla">${word.meaning}</p>
+        </div>
+        <div>
+            <h2 class="font-semibold">Example</h2>
+            <p>${word.sentence}</p>
+        </div>
+        <div>
+            <h2 class="font-semibold mb-1">Synonym</h2>
+            <div class="">
+            ${createElements(word.synonyms)}
+            </div>
+        </div>`
+    document.getElementById("my_modal_5").showModal();
 }
 
 const displayLevelWord = (words) => {
@@ -33,7 +96,7 @@ const displayLevelWord = (words) => {
             <h2 class="text-[#292524] text-4xl font-semibold font-bangla">নেক্সট Lesson এ যান</h2>
         </div>
         `;
-        
+        manageSpinner(false);
         return;
     }
 
@@ -54,12 +117,13 @@ const displayLevelWord = (words) => {
             <p class="font-medium">Meaning / Pronunciation</p>
             <div class="font-semibold text-2xl font-bangla text-[#57575a]">"${word.meaning ? word.meaning : "অর্থ পাওয়া যায়নি"} / ${word.pronunciation  ? word.pronunciation : "Pronunciation পাওয়া যায়নি"}"</div>
             <div class="flex justify-between items-center">
-                <button onclick="my_modal_5.showModal()" class="btn text-[#374957] bg-[#1A91FF20] hover:bg-[#1A91FF70]"><i class="fa-solid fa-circle-info"></i> </button>
+                <button onClick="loadWordDetail(${word.id})" class="btn text-[#374957] bg-[#1A91FF20] hover:bg-[#1A91FF70]"><i class="fa-solid fa-circle-info"></i> </button>
                 <button class="btn text-[#374957] bg-[#1A91FF20] hover:bg-[#1A91FF70]"><i class="fa-solid fa-volume-high"></i> </button>
             </div>
         </div>
         `;
-        wordContainer.append(card)
+        wordContainer.append(card);
+        manageSpinner(false);
     });
 };
 
