@@ -1,15 +1,18 @@
+// step - 8: add dynamic synonyms for step 7
 const createElements = (arr) => {
     console.log(arr);
     const htmlElements = arr.map(el => `<span class="btn">${el}</span>`);
     return(htmlElements.join(" "));
 };
 
+// step - 11: add pronounce when click the volume btn
 function pronounceWord(word) {
   const utterance = new SpeechSynthesisUtterance(word);
   utterance.lang = "en-EN"; // English
   window.speechSynthesis.speak(utterance);
 }
 
+// step - 10: add loading spinner in step-3 and step-4
 const manageSpinner = (status) => {
     if(status == true){
         document.getElementById("spinner").classList.remove("hidden");
@@ -20,17 +23,20 @@ const manageSpinner = (status) => {
     }
 };
 
+// step - 1: lesson button fetch
 const loadLessons = () => {
     fetch("https://openapi.programming-hero.com/api/levels/all") // promise of response
     .then ((res) => res.json()) // promise of json data
     .then ((json) => displayLesson(json.data));
 };
 
+// step - 5: remove toggle btn
 const removeActive = () => {
     const lessonBtns = document.querySelectorAll(".lesson-btn");
     lessonBtns.forEach(btn => btn.classList.remove("active"));
 };
 
+// step - 3: fetch the level words and toggle btn
 const loadLevelWord = (id) => {
     manageSpinner(true);
     const url = `https://openapi.programming-hero.com/api/level/${id}`;
@@ -60,6 +66,9 @@ const loadLevelWord = (id) => {
 //     "id": 5
 // }
 
+
+
+// step - 6: load the word details and call it step-4 at onClick
 const loadWordDetail = async (id) => {
     const url = `https://openapi.programming-hero.com/api/word/${id}`;
     const res = await fetch(url);
@@ -67,6 +76,7 @@ const loadWordDetail = async (id) => {
     displayWordDetails(details.data);
 }
 
+// step - 7: display the word detail and call it step 6
 const displayWordDetails = (word) => {
     console.log(word);
     const detailsBox = document.getElementById("details-container");
@@ -90,6 +100,7 @@ const displayWordDetails = (word) => {
     document.getElementById("my_modal_5").showModal();
 }
 
+// step - 4: display the level words
 const displayLevelWord = (words) => {
     const wordContainer = document.getElementById("word-container");
     wordContainer.innerHTML = "";
@@ -133,6 +144,7 @@ const displayLevelWord = (words) => {
     });
 };
 
+// step-2: lesson btn display
 const displayLesson = (lessons) => {
     // 1. get the container & empty
     const levelContainer = document.getElementById("level-container");
@@ -153,6 +165,7 @@ const displayLesson = (lessons) => {
 };
 loadLessons();
 
+// step - 9: add a event listener for search word
 document.getElementById("btn-search").addEventListener("click", () => {
     removeActive();
     const input = document.getElementById("input-search");
